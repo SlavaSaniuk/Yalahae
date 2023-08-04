@@ -212,4 +212,86 @@ public class IOUtilsTestCase {
             Assertions.fail(e.getMessage());
         }
     }
+
+    @Test
+    void writeString_stringsIsNullAndEmpty_shouldSkipIt() {
+        try {
+            IOUtils.writeString(null, this.testFile);
+            IOUtils.writeString("", this.testFile);
+        } catch (IOException e) {
+            Assertions.fail(e.getMessage());
+        }
+
+        try {
+            Assertions.assertTrue(IOUtils.fileContentAsList(this.testFile).isEmpty());
+        } catch (IOException e) {
+            Assertions.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    void writeString_notEmptyString_shouldWriteString() {
+        String line = "Hello world!";
+        try {
+            IOUtils.writeString(line, this.testFile);
+        } catch (IOException e) {
+            Assertions.fail(e.getMessage());
+        }
+
+        try {
+            String[] fileContent = IOUtils.fileContentAsArray(this.testFile);
+            Assertions.assertNotNull(fileContent);
+            Assertions.assertEquals(1, fileContent.length);
+
+            String actualLine = fileContent[0];
+            Assertions.assertNotNull(actualLine);
+            Assertions.assertEquals(line, actualLine);
+            LOGGER.debug(String.format("Written string: [%s];", actualLine));
+        } catch (IOException e) {
+            Assertions.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    void writeStringArray_emptyArray_shouldSkipIt() {
+        try {
+            IOUtils.writeStringArray(new String[]{}, this.testFile);
+        }catch (IOException e) {
+            Assertions.fail(e.getMessage());
+        }
+
+        try {
+            String[] content = IOUtils.fileContentAsArray(this.testFile);
+
+            Assertions.assertNotNull(content);
+            Assertions.assertEquals(0, content.length);
+        } catch (IOException e) {
+            Assertions.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    void writeStringArray_someElementsIsNullOrEmpty_shouldSkipIt() {
+        String[] strArr = new String[] {"Hello, world!\n", null, "", "\n", "My name is Slavka."};
+        try {
+            IOUtils.writeStringArray(strArr, this.testFile);
+        } catch (IOException e) {
+            Assertions.fail(e.getMessage());
+        }
+
+        try {
+            String[] actualArr = IOUtils.fileContentAsArray(this.testFile);
+
+            Assertions.assertNotNull(actualArr);
+            Assertions.assertEquals(3, actualArr.length);
+            LOGGER.debug("====== File content =====");
+            for (String str : actualArr) {
+                System.out.println(str);
+            }
+            LOGGER.debug("=========================");
+        } catch (IOException e) {
+            Assertions.fail(e.getMessage());
+        }
+    }
+
 }

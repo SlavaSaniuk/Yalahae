@@ -2,6 +2,7 @@ package me.saniukvyacheslav.util.file;
 
 import me.saniukvyacheslav.util.string.YalahaeStrings;
 
+import javax.annotation.Nullable;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -113,7 +114,74 @@ public final class IOUtils {
         return fileContent;
     }
 
+    /**
+     * Read file content as array of Strings.
+     * @param aFile - file to read.
+     * @return - array of strings.
+     * @throws IOException - If IO exceptions occur.
+     */
     public static String[] fileContentAsArray(File aFile) throws IOException {
         return IOUtils.fileContentAsList(aFile).toArray(new String[0]);
+    }
+
+    /**
+     *  Write String to file.
+     * If specified string is null or empty, method skip writing.
+     * @param aStr - String to file.
+     * @param aFile - File.
+     * @throws IOException - If IO exceptions occur.
+     */
+    public static void writeString(@Nullable String aStr, File aFile) throws IOException {
+        // Check parameters:
+        if((aStr == null) || (aStr.isEmpty())) return;
+        Objects.requireNonNull(aFile);
+
+        // Open writer:
+        BufferedWriter writer = IOUtils.openWriter(aFile);
+        // Write line:
+        writer.write(aStr);
+        writer.flush();
+        // Close writer:
+        writer.close();
+    }
+
+    /**
+     *  Write array of string in file.
+     * If specified array is null or empty, method skip writing.
+     * @param aStrArr - array of strings.
+     * @param aFile - target file.
+     * @throws IOException - If IO exceptions occur.
+     */
+    public static void writeStringArray(@Nullable String[] aStrArr, File aFile) throws IOException {
+        // Check parameters:
+        if ((aStrArr == null) || (aStrArr.length == 0)) return;
+        Objects.requireNonNull(aFile);
+
+        // Open writer:
+        BufferedWriter writer = IOUtils.openWriter(aFile);
+        // Write lines:
+        for (String str : aStrArr) {
+            if ((str == null) || (str.isEmpty())) continue;
+            writer.write(str);
+        }
+        writer.flush();
+        // Close writer:
+        writer.close();
+    }
+
+    /**
+     *  Write list of strings in file.
+     * If specified list is null or empty, method skip writing.
+     * @param aStrLst - list of strings.
+     * @param aFile - file.
+     * @throws IOException - If IO exceptions occur.
+     */
+    public static void writeStringList(@Nullable List<String> aStrLst, File aFile) throws IOException {
+        // Check parameters:
+        if ((aStrLst == null) || (aStrLst.isEmpty())) return;
+        Objects.requireNonNull(aFile);
+
+        // Write strings:
+        IOUtils.writeStringArray(aStrLst.toArray(aStrLst.toArray(new String[0])), aFile);
     }
 }
